@@ -1,0 +1,35 @@
+@(cultivars: Seq[Cultivar], form: Form[SpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+
+@main("Cultivars") {
+
+@request.flash.data.map{ case (name, value) =>
+<h1>Cultivars of @value</h1>
+}
+
+<table>
+    <tbody>
+    @for(c <- cultivars) {
+    <tr><td>@c.name</td></tr>
+    }
+    </tbody>
+</table>
+
+<hr/>
+
+@* Global errors are not tied to any particular form field *@
+@if(form.hasGlobalErrors) {
+@form.globalErrors.map { error: FormError =>
+<div>
+    @error.key: @error.message
+</div>
+}
+}
+
+@helper.form(postUrl) {
+@helper.CSRF.formField
+
+@helper.inputText(form("name"))
+
+<button>Show cultivars of species</button>
+}
+}
