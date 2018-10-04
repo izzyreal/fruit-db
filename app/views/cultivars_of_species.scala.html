@@ -2,34 +2,34 @@
 
 @main("Cultivars") {
 
-@request.flash.data.map{ case (name, value) =>
-<h1>Cultivars of @value</h1>
-}
-
-<table>
-    <tbody>
-    @for(c <- cultivars) {
-    <tr><td>@c.name</td></tr>
+    @request.flash.data.map{ case (name, value) =>
+        <h1>Cultivars of @value</h1>
     }
-    </tbody>
-</table>
 
-<hr/>
+    <table>
+        <tbody>
+        @for(c <- cultivars) {
+        <tr><td>@c.name</td></tr>
+        }
+        </tbody>
+    </table>
 
-@* Global errors are not tied to any particular form field *@
-@if(form.hasGlobalErrors) {
-@form.globalErrors.map { error: FormError =>
-<div>
-    @error.key: @error.message
-</div>
-}
-}
+    <hr/>
 
-@helper.form(postUrl) {
-@helper.CSRF.formField
+    @* Global errors are not tied to any particular form field *@
+    @if(form.hasGlobalErrors) {
+        @form.globalErrors.map { error: FormError =>
+        <div>
+            @error.key: @error.message
+        </div>
+        }
+    }
 
-@helper.inputText(form("name"))
+    @helper.form(postUrl) {
+        @helper.CSRF.formField
 
-<button>Show cultivars of species</button>
-}
+        @helper.inputText(form("name"))
+
+        <button>Show cultivars of species</button>
+    }
 }
