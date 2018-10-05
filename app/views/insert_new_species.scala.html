@@ -1,20 +1,6 @@
-@(cultivars: Seq[Cultivar], form: Form[InsertNewSpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+@(form: Form[InsertNewSpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
 
-@main("Cultivars") {
-
-    @request.flash.data.map{ case (name, value) =>
-        <h1>Cultivars of @value</h1>
-    }
-
-    <table>
-        <tbody>
-        @for(c <- cultivars) {
-        <tr><td>@c.name</td></tr>
-        }
-        </tbody>
-    </table>
-
-    <hr/>
+@main("Insert new species") {
 
     @* Global errors are not tied to any particular form field *@
     @if(form.hasGlobalErrors) {

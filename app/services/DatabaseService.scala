@@ -44,7 +44,7 @@ object DatabaseService {
     try {
       Await.result(db.run(species.result), duration).foreach {
         case (id, genus, name, commonName) => {
-          res += id + "\t" + genus.capitalize + " " + name + " (" + commonName + ")" + "\n"
+          res += id.get + "\t" + genus.capitalize + " " + name + " (" + commonName + ")" + "\n"
         }
 
       }
@@ -98,9 +98,11 @@ object DatabaseService {
 
     try {
 
-      species += (genusName, speciesName, commonName)
+      val insertAction = DBIO.seq(species += (None, genusName, speciesName, commonName))
+      println("genus: " + genusName)
+      Await.result(db.run(insertAction), duration)
 
-      Await.result(db.run(species.result), duration)
+      println("Insert statement executed.")
 
     } finally db.close()
 
