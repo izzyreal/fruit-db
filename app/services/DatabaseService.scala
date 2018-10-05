@@ -2,9 +2,8 @@ package services
 
 import models.Cultivar
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.PostgresProfile.api._
-import slick.lifted.{ProvenShape, TableQuery}
+import slick.lifted.TableQuery
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Await
@@ -12,35 +11,35 @@ import scala.concurrent.duration.Duration
 
 object DatabaseService {
 
-  implicit val duration = Duration.Inf
+  def getDb = { Database.forConfig("slick-postgres") }
 
-  val species = TableQuery[Species];
+  var species = TableQuery[Species];
   val cultivars = TableQuery[Cultivars];
 
-  class Species(tag: Tag) extends Table[(Int, String, String, String)](tag, Some("fruit"), "species") {
-    def id = column[Int]("species_id")
+  implicit val duration = Duration.Inf
 
+  /* Class that represents a table of species */
+  class Species(tag: Tag) extends Table[(Option[Int], String, String, String)](tag, Some("fruit"), "species") {
+    def id = column[Option[Int]]("species_id", O.PrimaryKey, O.AutoInc)
     def genus = column[String]("genus_name")
-
     def name = column[String]("species_name")
-
     def commonName = column[String]("common_name")
-
     def * = (id, genus, name, commonName)
   }
 
+  /* Class that represents a table of cultivars */
   class Cultivars(tag: Tag) extends Table[(Int, String, Int)](tag, Some("fruit"), "cultivars") {
     def id = column[Int]("cultivar_id")
-
     def name = column[String]("cultivar_name")
-
     def speciesId = column[Int]("species_id")
-
     def * = (id, name, speciesId)
   }
 
+  /* List all species in the database */
   def listSpecies(): String = {
-    val db = Database.forConfig("slick-postgres")
+
+    val db = getDb
+
     var res = ""
     try {
       Await.result(db.run(species.result), duration).foreach {
@@ -49,13 +48,16 @@ object DatabaseService {
         }
 
       }
-
     } finally db.close
-    return res
+    res
   }
 
+
+  /* List all cultivars in the database, accompanied by their common species name */
   def listCultivars(): String = {
-    val db = Database.forConfig("slick-postgres")
+
+    val db = getDb
+
     var res = ""
     try {
 
@@ -68,33 +70,40 @@ object DatabaseService {
           res += cultivarCap + " is a " + speciesCommonName + " cultivar\n"
         }
       }
-    }
-    finally db.close
-
-    return res
+    } finally db.close
+    res
   }
 
   def listCultivarsOfSpeciesCommonName(name: String): ArrayBuffer[Cultivar] = {
-    val db = Database.forConfig("slick-postgres")
+
+    val db = getDb
+
     val res = ArrayBuffer[Cultivar]()
 
     try {
-
-      val filteredSpecies = species.filter(_.commonName === name)
-
-      val innerJoin = for {(c, s) <- cultivars join filteredSpecies on (_.speciesId === _.id)} yield (c.name, s.commonName)
-
+      val innerJoin = for {(c, _) <- cultivars join species.filter(_.commonName === name) on (_.speciesId === _.id)} yield c.name
       Await.result(db.run(innerJoin.result), duration).foreach {
-        case (cultivar, speciesCommonName) => {
+        cultivar => {
           val cultivarCap = cultivar.split(' ').map(_.capitalize).mkString(" ")
-
           res.append(Cultivar(cultivarCap))
         }
       }
-    }
-    finally db.close
+    } finally db.close
+    res
+  }
 
-    return res
+  def insertNewSpecies(genusName: String, speciesName: String, commonName: String): Unit = {
+
+    val db = getDb
+
+    try {
+
+      species += (genusName, speciesName, commonName)
+
+      Await.result(db.run(species.result), duration)
+
+    } finally db.close()
+
   }
 
 }

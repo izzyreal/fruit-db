@@ -1,6 +1,6 @@
 package controllers
 
-object SpeciesForm {
+object CultivarsOfSpeciesForm {
   import play.api.data.Forms._
   import play.api.data.Form
 

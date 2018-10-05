@@ -1,4 +1,4 @@
-@(cultivars: Seq[Cultivar], form: Form[CultivarsOfSpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+@(cultivars: Seq[Cultivar], form: Form[InsertNewSpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
 
 @main("Cultivars") {
 
@@ -28,8 +28,10 @@
     @helper.form(postUrl) {
         @helper.CSRF.formField
 
-        @helper.inputText(form("name"))
+        @helper.inputText(form("genus"))
+        @helper.inputText(form("species"))
+        @helper.inputText(form("common_name"))
 
-        <button>Show cultivars of species</button>
+        <button>Insert species into database</button>
     }
 }
