@@ -1,0 +1,23 @@
+@(form: Form[InsertSpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+
+@main("Insert new species") {
+
+    @* Global errors are not tied to any particular form field *@
+    @if(form.hasGlobalErrors) {
+        @form.globalErrors.map { error: FormError =>
+        <div>
+            @error.key: @error.message
+        </div>
+        }
+    }
+
+    @helper.form(postUrl) {
+        @helper.CSRF.formField
+
+        @helper.inputText(form("genus"))
+        @helper.inputText(form("species"))
+        @helper.inputText(form("common_name"))
+
+        <button>Insert species into database</button>
+    }
+}
