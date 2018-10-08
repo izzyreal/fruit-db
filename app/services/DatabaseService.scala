@@ -99,10 +99,33 @@ object DatabaseService {
     try {
 
       val insertAction = DBIO.seq(species += (None, genusName, speciesName, commonName))
-      println("genus: " + genusName)
       Await.result(db.run(insertAction), duration)
 
-      println("Insert statement executed.")
+    } finally db.close()
+
+  }
+
+  def deleteSpecies(id: Int): Unit = {
+
+    val db = getDb
+
+    try {
+
+      val deleteAction = species.filter(_.id === id).delete
+      Await.result(db.run(deleteAction), duration)
+
+    } finally db.close()
+
+  }
+
+  def deleteSpecies(commonName: String): Unit = {
+
+    val db = getDb
+
+    try {
+
+      val deleteAction = species.filter(_.commonName === commonName).delete
+      Await.result(db.run(deleteAction), duration)
 
     } finally db.close()
 

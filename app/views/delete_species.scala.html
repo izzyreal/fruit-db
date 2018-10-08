@@ -1,0 +1,25 @@
+@(form: Form[DeleteSpeciesForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+
+@main("Delete species") {
+
+    @* Global errors are not tied to any particular form field *@
+    @if(form.hasGlobalErrors) {
+        @form.globalErrors.map { error: FormError =>
+        <div>
+            @error.key: @error.message
+        </div>
+        }
+    }
+
+    @helper.form(postUrl) {
+        @helper.CSRF.formField
+
+        @helper.inputText(form("species_id"))
+
+        <p>or</p>
+
+        @helper.inputText(form("species_common_name"))
+
+        <button>Delete species from database</button>
+    }
+}

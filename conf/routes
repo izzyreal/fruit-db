@@ -19,3 +19,6 @@ POST    /list-cultivars-of-species      controllers.CultivarsOfSpeciesController
 
 GET     /insert-new-species             controllers.InsertNewSpeciesController.showFields
 POST    /insert-new-species             controllers.InsertNewSpeciesController.submitSpecies
+
+GET     /delete-species             controllers.DeleteSpeciesController.showFields
+POST    /delete-species             controllers.DeleteSpeciesController.submitSpecies
