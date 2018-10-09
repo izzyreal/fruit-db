@@ -5,32 +5,32 @@ import play.api.data._
 import play.api.mvc._
 import services.DatabaseService
 
-class InsertSpeciesController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
-  import InsertSpeciesForm._
+class InsertCultivarController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
+  import InsertCultivarForm._
 
   // The URL to the widget.  You can call this directly from the template, but it
   // can be more convenient to leave the template completely stateless i.e. all
   // of the "WidgetController" references are inside the .scala file.
-  private val postUrl = routes.InsertSpeciesController.submitSpecies()
+  private val postUrl = routes.InsertCultivarController.submitCultivar()
 
   def showFields = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
-    Ok(views.html.insert_species(form, postUrl))
+    Ok(views.html.insert_cultivar(form, postUrl))
   }
 
   // This will be the action that handles our form post
-  def submitSpecies = Action { implicit request: MessagesRequest[AnyContent] =>
+  def submitCultivar = Action { implicit request: MessagesRequest[AnyContent] =>
 
     val errorFunction = { formWithErrors: Form[Data] =>
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
       // Note how we pass the form with errors to the template.
-      BadRequest(views.html.insert_species(formWithErrors, postUrl))
+      BadRequest(views.html.insert_cultivar(formWithErrors, postUrl))
     }
 
     val successFunction = { data: Data =>
-      DatabaseService.insertSpecies(data.genus, data.species, data.commonName)
-      Redirect(routes.InsertSpeciesController.submitSpecies()).flashing("info" -> data.commonName)
+      DatabaseService.insertCultivar(data.name, data.speciesId)
+      Redirect(routes.InsertCultivarController.submitCultivar())
     }
 
     val formValidationResult = form.bindFromRequest

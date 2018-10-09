@@ -17,8 +17,14 @@ GET     /list-cultivars             controllers.CultivarsController.list
 GET     /list-cultivars-of-species      controllers.CultivarsOfSpeciesController.listCultivars
 POST    /list-cultivars-of-species      controllers.CultivarsOfSpeciesController.submitSpecies
 
-GET     /insert-new-species             controllers.InsertNewSpeciesController.showFields
-POST    /insert-new-species             controllers.InsertNewSpeciesController.submitSpecies
+GET     /insert-species             controllers.InsertSpeciesController.showFields
+POST    /insert-species             controllers.InsertSpeciesController.submitSpecies
 
 GET     /delete-species             controllers.DeleteSpeciesController.showFields
 POST    /delete-species             controllers.DeleteSpeciesController.submitSpecies
+
+GET     /insert-cultivar           controllers.InsertCultivarController.showFields
+POST    /insert-cultivar             controllers.InsertCultivarController.submitCultivar
+
+GET     /delete-cultivar            controllers.DeleteCultivarController.showFields
+POST    /delete-cultivar            controllers.DeleteCultivarController.submitCultivar

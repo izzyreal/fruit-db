@@ -1,14 +1,14 @@
 package controllers
 
-object InsertSpeciesForm {
+object InsertCultivarForm {
   import play.api.data.Form
   import play.api.data.Forms._
 
-  case class Data(genus: String, species: String, commonName: String)
+  case class Data(name: String, speciesId: Int)
 
   val form = Form(
     mapping(
-      "genus" -> nonEmptyText, "species" -> nonEmptyText, "common_name" -> nonEmptyText
+      "name" -> nonEmptyText, "species_id" -> number
     )(Data.apply)(Data.unapply)
   )
 }

@@ -1,6 +1,6 @@
-@(form: Form[InsertCultivarForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+@(form: Form[DeleteCultivarForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
 
-@main("Insert new cultivar") {
+@main("Delete cultivar") {
 
     @* Global errors are not tied to any particular form field *@
     @if(form.hasGlobalErrors) {
@@ -14,9 +14,12 @@
     @helper.form(postUrl) {
         @helper.CSRF.formField
 
-        @helper.inputText(form("name"))
-        @helper.inputText(form("species_id"))
+        @helper.inputText(form("cultivar_id"))
 
-        <button>Insert cultivar into database</button>
+        <p>or</p>
+
+        @helper.inputText(form("cultivar_name"))
+
+        <button>Delete cultivar from database</button>
     }
 }

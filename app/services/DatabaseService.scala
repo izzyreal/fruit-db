@@ -11,7 +11,9 @@ import scala.concurrent.duration.Duration
 
 object DatabaseService {
 
-  def getDb = { Database.forConfig("slick-postgres") }
+  def getDb = {
+    Database.forConfig("slick-postgres")
+  }
 
   var species = TableQuery[Species];
   val cultivars = TableQuery[Cultivars];
@@ -21,17 +23,24 @@ object DatabaseService {
   /* Class that represents a table of species */
   class Species(tag: Tag) extends Table[(Option[Int], String, String, String)](tag, Some("fruit"), "species") {
     def id = column[Option[Int]]("species_id", O.PrimaryKey, O.AutoInc)
+
     def genus = column[String]("genus_name")
+
     def name = column[String]("species_name")
+
     def commonName = column[String]("common_name")
+
     def * = (id, genus, name, commonName)
   }
 
   /* Class that represents a table of cultivars */
-  class Cultivars(tag: Tag) extends Table[(Int, String, Int)](tag, Some("fruit"), "cultivars") {
-    def id = column[Int]("cultivar_id")
+  class Cultivars(tag: Tag) extends Table[(Option[Int], String, Int)](tag, Some("fruit"), "cultivars") {
+    def id = column[Option[Int]]("cultivar_id", O.PrimaryKey, O.AutoInc)
+
     def name = column[String]("cultivar_name")
+
     def speciesId = column[Int]("species_id")
+
     def * = (id, name, speciesId)
   }
 
@@ -92,7 +101,7 @@ object DatabaseService {
     res
   }
 
-  def insertNewSpecies(genusName: String, speciesName: String, commonName: String): Unit = {
+  def insertSpecies(genusName: String, speciesName: String, commonName: String): Unit = {
 
     val db = getDb
 
@@ -125,6 +134,45 @@ object DatabaseService {
     try {
 
       val deleteAction = species.filter(_.commonName === commonName).delete
+      Await.result(db.run(deleteAction), duration)
+
+    } finally db.close()
+
+  }
+
+  def insertCultivar(name: String, speciesId: Int): Unit = {
+
+    val db = getDb
+
+    try {
+
+      val insertAction = DBIO.seq(cultivars += (None, name, speciesId))
+      Await.result(db.run(insertAction), duration)
+
+    } finally db.close()
+
+  }
+
+  def deleteCultivar(name: String): Unit = {
+
+    val db = getDb
+
+    try {
+
+      val deleteAction = cultivars.filter(_.name === name).delete
+      Await.result(db.run(deleteAction), duration)
+
+    } finally db.close()
+
+  }
+
+  def deleteCultivar(id: Int): Unit = {
+
+    val db = getDb
+
+    try {
+
+      val deleteAction = cultivars.filter(_.id === id).delete
       Await.result(db.run(deleteAction), duration)
 
     } finally db.close()

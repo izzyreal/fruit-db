@@ -1,6 +1,6 @@
 package controllers
 
-object InsertNewSpeciesForm {
+object InsertSpeciesForm {
   import play.api.data.Form
   import play.api.data.Forms._
 
